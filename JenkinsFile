@@ -1,0 +1,38 @@
+pipeline {
+    agent {
+        docker {
+            image 'python:2-alpine'
+        }
+    }
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'master', url: 'https://github.com/mzaedan/simple-python-pyinstaller-app'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'python sources/add2vals.py 5 7'
+            }
+        }
+        stage('Manual Approval') {
+            steps {
+                script {
+                    input message: 'Lanjutkan ke tahap Deploy?', ok: 'Proceed'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploy stage executed - replace with actual deployment commands'
+                echo 'Menjeda pipeline selama 1 menit untuk menjalankan aplikasi...'
+                sh 'sleep 60'
+            }
+        }
+    }
+}
